@@ -1,1 +1,1 @@
-![](./images/baseline/transactions.png | width=600)
+<img src="./images/baseline/transactions.png" width="600" height="400" />
