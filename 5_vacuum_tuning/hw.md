@@ -1,1 +1,1 @@
-![](./images/baseline/transactions.png 600x400)
+![](./images/baseline/transactions.png =600x400)
