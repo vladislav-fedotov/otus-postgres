@@ -18,7 +18,7 @@
 - `autovacuum_max_workers = 3`
 
 ### Transactions
-![](./images/baseline/transactions.png){:height="50%" width="50%"}
+![](./images/baseline/transactions.png | width=669 height=391)
 ### Live Tuples
 ![](./images/baseline/live_tuples.png){:height="50%" width="50%"}
 ### Dead Tuples
