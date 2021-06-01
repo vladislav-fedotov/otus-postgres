@@ -18,17 +18,17 @@
 - `autovacuum_max_workers = 3`
 
 ### Transactions
-![](./images/baseline/transactions.png){height=669px width=391px}
+![](./images/baseline/transactions.png){:height="50%" width="50%"}
 ### Live Tuples
-![](./images/baseline/live_tuples.png)
+![](./images/baseline/live_tuples.png){:height="50%" width="50%"}
 ### Dead Tuples
-![](./images/baseline/dead_tuples.png)
+![](./images/baseline/dead_tuples.png){:height="50%" width="50%"}
 ### Autovacuum Count
-![](./images/baseline/autovacuum_count.png)
+![](./images/baseline/autovacuum_count.png){:height="50%" width="50%"}
 ### Database Size
-![](./images/baseline/database_size.png)
+![](./images/baseline/database_size.png){:height="50%" width="50%"}
 ### Change Stats
-![](./images/baseline/change_stats.png)
+![](./images/baseline/change_stats.png){:height="50%" width="50%"}
 
 ## Summary
 
