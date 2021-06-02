@@ -180,13 +180,14 @@ Number of transactions actually processed: 1100224
 - Dead tuples у `pgbench_branches` росли на протяжении всего теста
 - Размер базы вырос до 85МБ
 
-
-    SELECT pg_size_pretty(sum(pg_relation_size(relid,'main'))) AS main,
-        pg_size_pretty(sum(pg_relation_size(relid,'fsm'))) AS fsm,
-        pg_size_pretty(sum(pg_relation_size(relid,'vm'))) AS vm,
-        pg_size_pretty(sum(pg_indexes_size(relid))) AS index,
-        pg_size_pretty(sum(pg_total_relation_size(relid))) AS total
-    FROM pg_stat_all_tables;
+```sql
+SELECT pg_size_pretty(sum(pg_relation_size(relid,'main'))) AS main,
+    pg_size_pretty(sum(pg_relation_size(relid,'fsm'))) AS fsm,
+    pg_size_pretty(sum(pg_relation_size(relid,'vm'))) AS vm,
+    pg_size_pretty(sum(pg_indexes_size(relid))) AS index,
+    pg_size_pretty(sum(pg_total_relation_size(relid))) AS total
+FROM pg_stat_all_tables;
+```
 
 |main  |   fsm   |   vm   |  index  | total
 |------|---------|--------|---------|-------
