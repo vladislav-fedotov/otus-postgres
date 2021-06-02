@@ -20,6 +20,8 @@
 |pgbench_history         |0
 
 ### Executed Requests
+
+```sql
     BEGIN;
 
     UPDATE pgbench_accounts SET abalance = abalance + :delta WHERE aid = :aid;
@@ -33,6 +35,7 @@
     INSERT INTO pgbench_history (tid, bid, aid, delta, mtime) VALUES (:tid, :bid, :aid, :delta, CURRENT_TIMESTAMP);
 
     END;
+```
 
 ### Initial Database Size
 
