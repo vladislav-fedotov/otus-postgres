@@ -208,7 +208,7 @@ Number of transactions actually processed: 1100224
 
 
     postgres=# SELECT relname, last_vacuum, last_autovacuum FROM pg_stat_user_tables;
-relname           |          last_vacuum          | last_autovacuum
+|relname          |          last_vacuum          | last_autovacuum
 |-----------------|-------------------------------|-----------------
 |pgbench_accounts | 2021-06-02 13:04:16.273836+00 |
 |pgbench_history  | 2021-06-02 13:04:16.336987+00 |
