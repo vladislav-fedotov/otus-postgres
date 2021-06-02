@@ -187,17 +187,20 @@ Number of transactions actually processed: 1100224
         pg_size_pretty(sum(pg_indexes_size(relid))) AS index,
         pg_size_pretty(sum(pg_total_relation_size(relid))) AS total
     FROM pg_stat_all_tables;
+
 |main  |   fsm   |   vm   |  index  | total
 |------|---------|--------|---------|-------
 |77 MB | 1112 kB | 360 kB | 5760 kB | 85 MB
 
     postgres=# SELECT name, setting FROM pg_settings WHERE name='autovacuum';
+
 |name       | setting
 |-----------|---------
 |autovacuum | off
 
 
     postgres=#  SELECT schemaname, relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname='pgbench_accounts' ORDER BY n_dead_tup;
+
 |schemaname |     relname      | n_live_tup | n_dead_tup
 |-----------|------------------|------------|------------
 |public     | pgbench_accounts |     100000 |       7021
@@ -208,6 +211,7 @@ Number of transactions actually processed: 1100224
 
 
     postgres=# SELECT relname, last_vacuum, last_autovacuum FROM pg_stat_user_tables;
+
 |relname          |          last_vacuum          | last_autovacuum
 |-----------------|-------------------------------|-----------------
 |pgbench_accounts | 2021-06-02 13:04:16.273836+00 |
