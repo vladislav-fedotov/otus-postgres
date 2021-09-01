@@ -408,10 +408,10 @@ transactions:                        193423 (321.62 per sec.)
 
 | Test | PG_Tune DB Type | TPS |
 |:----------------------|:-------------------------------------|:-------------------|
-| `oltp_read_write.lua` | -                                    | 141 654            |
-| `oltp_read_write.lua` | Online transaction processing system | 128 447            |
-| `oltp_read_only.lua`  | -                                    | 158 745            |
-| `oltp_read_only.lua`  | Data warehouse                       | 193 423            |
+| `oltp_read_write.lua` | -                                    | 235.83             |
+| `oltp_read_write.lua` | Online transaction processing system | 213.22             |
+| `oltp_read_only.lua`  | -                                    | 264.23             |
+| `oltp_read_only.lua`  | Data warehouse                       | 321.62             |
 
 * В первом тесте рекомендуемые `PG Tune` настройки привели к снижению производительности, скорее всего на данных 
   размерах базы и длительности теста использование большего размера `work_mem` и `shared_buffers` менее выгодно;
