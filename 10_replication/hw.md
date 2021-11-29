@@ -13,6 +13,8 @@
 * Реализовать горячее реплицирование для высокой доступности на VN4. Источником должна выступать VM3. Написать с какими
   проблемами столкнулись.
 
+![alt text](./vms_structure.svg)
+
 ### Подготовка
 
 Кластер для простоты развернем локально, воспользовавшись `docker-compose`:
@@ -820,8 +822,13 @@ vm3_replication=# table test2;
 ## Полезные Ссылки
 
 [Monitoring Postgres Replication](https://pgdash.io/blog/monitoring-postgres-replication.html)
+
 [Записки программиста](https://eax.me/postgresql-replication/)
+
 [Логическая репликация в PostgreSQL. Репликационные идентификаторы и популярные ошибки](https://habr.com/ru/company/postgrespro/blog/489308/)
+
 [PostgreSQL : Документация: 14: pg_basebackup](https://postgrespro.ru/docs/postgresql/14/app-pgbasebackup)
+
 [https://www.youtube.com/watch?v=lnY9MIyiALY](https://www.youtube.com/watch?v=lnY9MIyiALY)
+
 [Docker PostgreSQL](https://hub.docker.com/r/sameersbn/postgresql)
