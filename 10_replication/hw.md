@@ -26,7 +26,7 @@ services:
     image: sameersbn/postgresql:12-20200524
   restart: always # чтобы при перезапуске конфигурации контейнер сам поднимался
     ports:
-      - "5432:5432"
+      - "5432:5432" # нет необходимости контейнеры, итак, будут иметь доступ друг к другу внутри свой подсети
   vm2:
     container_name: vm2
     image: sameersbn/postgresql:12-20200524
