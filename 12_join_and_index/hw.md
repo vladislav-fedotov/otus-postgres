@@ -29,7 +29,6 @@ CREATE DATABASE json_and_index;
 <pre>
 <details>
 <summary>Функция `random_between`</summary>
-```sql
 CREATE OR REPLACE FUNCTION random_between(min_val NUMERIC, max_val NUMERIC, round_to INT = 0)
 RETURNS NUMERIC AS
 $$
@@ -43,13 +42,12 @@ $$
         END IF;
     END
 $$ language 'plpgsql';
-```
 </details>
 </pre>
+
 <pre>
 <details>
-<summary>Функция `random_tags`</summary>
-```sql 
+<summary>Функция `random_tags`</summary> 
 CREATE OR REPLACE FUNCTION random_tags(min_val NUMERIC = 0, max_val NUMERIC = 10) 
 RETURNS TEXT AS
 $$
@@ -65,13 +63,12 @@ $$
         RETURN result;
     END
 $$ LANGUAGE 'plpgsql';
-```
 </details>
 </pre>
+
 <pre>
 <details>
-<summary>Функция `random_text`</summary>
-```sql 
+<summary>Функция `random_text`</summary> 
 CREATE OR REPLACE FUNCTION random_text(min_val INT = 5, max_val INT = 50)
 RETURNS text AS
 $$
@@ -95,6 +92,7 @@ $$
 $$ LANGUAGE 'plpgsql';
 </details>
 </pre>
+
 <pre>
 <details>
 <summary>Функция `random_json`</summary>
@@ -119,7 +117,6 @@ $$
         RETURN random_json;
     END
 $$ LANGUAGE 'plpgsql';
-```
 </details>
 </pre>
 
@@ -150,21 +147,19 @@ CREATE TABLE host_data (
 
 <pre>
 <details>
-<summary>Запос заполняющий таблицу `host`</summary>
-```sql
+<summary>Запрос заполняющий таблицу `host`</summary>
 INSERT INTO host
 SELECT 
     id, 
     'host_' || id::TEXT AS name, 
 	random_json(ARRAY['building', 'rack'], 1, 20) AS location
 FROM generate_series(1, 100) AS id;
-```
 </details>
-</pre>
+
+
 <pre>
 <details>
-<summary>Запос заполняющий таблицу `host_data`</summary>
-```sql
+<summary>Запрос заполняющий таблицу `host_data`</summary>
 INSERT INTO host_data
 SELECT 
     date, 
@@ -176,7 +171,6 @@ SELECT
 FROM 
     generate_series(now() - INTERVAL '1 MONTH', now(), INTERVAL '10 minutes') AS date,
     generate_series(1, 10) AS host_id;
-```
 </details>
 </pre>
 
@@ -194,7 +188,6 @@ UPDATE host_data SET tags_token = to_tsvector(tags);
 ```
 
 Пример содержимого таблицы `host`:
-
 ```shell
 json_and_index=# SELECT * FROM host LIMIT 10;
  id | host_name |           location
@@ -212,7 +205,6 @@ json_and_index=# SELECT * FROM host LIMIT 10;
 ```
 
 Пример содержимого таблицы `host_data`:
-
 ```shell
 json_and_index=# SELECT * FROM host_data LIMIT 3 \gx
 -[ RECORD 1 ]-----------------------------------------------------
@@ -241,8 +233,7 @@ tags       | pseudomeningitis vulpine terricoline
 tags_token | 'pseudomening':1 'terricolin':3 'vulpin':2
 ```
 
-Посмотрим получившиейся размер таблиц и колличество строк:
-
+Посмотрим получившейся размер таблиц и количество строк:
 ```shell
 json_and_index=# SELECT COUNT(*) FROM host;
 count
@@ -274,7 +265,6 @@ json_and_index=# select pg_size_pretty(pg_table_size('host_data'));
 <pre>
 <details>
 <summary><code>EXPLAIN ANALYZE</code> для запроса по температуре без индекса</summary>
-```shell
 json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE tempc < 50;
                                                  QUERY PLAN
 ---------------------------------------------------------------------------------------------------------------------
@@ -292,7 +282,6 @@ Filter: (tempc < 50)
 Rows Removed by Filter: 845379
 Planning Time: 1.616 ms
 Execution Time: 252.805 ms
-```
 </details>
 </pre>
 
@@ -301,7 +290,6 @@ Execution Time: 252.805 ms
 `tempc`
 
 Создадим индекс и воспользуемся правилами именования по ссылке ниже:
-
 * [The standard names for indexes in PostgreSQL](https://gist.github.com/popravich/d6816ef1653329fb1745)
 
 ```sql
@@ -317,7 +305,7 @@ json_and_index=# SELECT pg_size_pretty(pg_table_size('host_data_tempc_idx'));
  8920 kB
 ```
 
-Выполним теже самые запросы и проверим, был ли использован индекс:
+Выполним те же самые запросы и проверим, был ли использован индекс:
 <pre>
 <details>
 <summary><code>EXPLAIN ANALYZE</code> для запроса по температуре c индексом</summary>
@@ -341,13 +329,12 @@ Index Cond: (tempc < 50)
 Heap Fetches: 0
 Planning Time: 0.354 ms
 Execution Time: 87.629 ms
-```
 </details>
 </pre>
 
 **Результат**: `Bitmap Index Scan on host_data_tempc_idx` Bitmap отменил нужные страницы с данными используя индекс в
 первом случае и `Index Only Scan` использовался только индекс во втором. Времы выполнения запроса в первом случае даже
-замедлилолсь (495 стало, было 467), но во втором значительно выросло (87 стало, было 252).
+замедлилось (495 стало, было 467), но во втором значительно выросло (87 стало, было 252).
 
 ### 2. Реализовать индекс для полнотекстового поиска
 
@@ -376,7 +363,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE tags_token @@ to_
    Options: Inlining false, Optimization false, Expressions true, Deforming true
    Timing: Generation 8.833 ms, Inlining 0.000 ms, Optimization 4.768 ms, Emission 27.631 ms, Total 41.231 ms
  Execution Time: 604.732 ms
-```
 </details>
 </pre>
 
@@ -417,7 +403,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE tags_token @@ to_
          Index Cond: (tags_token @@ to_tsquery('dog'::text))
  Planning Time: 5.027 ms
  Execution Time: 4.440 ms
-```
 </details>
 </pre>
 
@@ -444,7 +429,6 @@ EXPLAIN ANALYZE SELECT * FROM host_data WHERE cpu < 25.5 OR cpu > 75.5;
    Rows Removed by Filter: 689619
  Planning Time: 2.024 ms
  Execution Time: 313.646 ms
-```
 </details>
 </pre>
 
@@ -486,7 +470,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE cpu < 25.5 OR cpu
    ->  Bitmap Index Scan on host_data_cpu_idx  (cost=0.00..8786.83 rows=552481 width=0) (actual time=62.745..62.746 rows=620881 loops=1)
  Planning Time: 0.305 ms
  Execution Time: 245.712 ms
-```
 </details>
 </pre>
 
@@ -510,7 +493,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE cpu < 40.5;
  Seq Scan on host_data  (cost=0.00..67192.04 rows=483451 width=151) (actual time=0.335..169.322 rows=489613 loops=1)
    Filter: (cpu < '40.5'::double precision)
    Rows Removed by Filter: 820887
-```
 </details>
 </pre>
 
@@ -534,7 +516,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE cpu < 20;
    Heap Blocks: exact=30533
    ->  Bitmap Index Scan on host_data_cpu_idx  (cost=0.00..3846.04 rows=206082 width=0) (actual time=39.212..39.212 rows=207141 loops=1)
          Index Cond: (cpu < '20'::double precision)
-```
 </details>
 </pre>
 
@@ -557,7 +538,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE lower(substring(s
          Rows Removed by Filter: 436814
  Planning Time: 0.886 ms
  Execution Time: 262.880 ms
-```
 </details>
 </pre>
 
@@ -590,7 +570,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE lower(substring(s
    Index Cond: (lower(SUBSTRING(split_part(status, ' '::text, 2) FROM 1 FOR 3)) = ANY ('{com,net,pic}'::text[]))
  Planning Time: 0.257 ms
  Execution Time: 4.910 ms
-```
 </details>
 </pre>
 
@@ -614,7 +593,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE (date BETWEEN '20
    Rows Removed by Filter: 1192803
  Planning Time: 0.473 ms
  Execution Time: 279.629 ms
-```
 </details>
 </pre>
 
@@ -642,7 +620,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE (date BETWEEN '20
          Index Cond: ((date >= '2021-10-15 00:00:00+00'::timestamp with time zone) AND (date <= '2021-11-15 00:00:00+00'::timestamp with time zone) AND (cpu > '75'::double precision))
  Planning Time: 3.530 ms
  Execution Time: 168.466 ms
-```
 </details>
 </pre>
 
@@ -661,7 +638,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT * FROM host_data WHERE (date BETWEEN '20
 <pre>
 <details>
 <summary><code>EXPLAIN ANALYZE</code> для <code>INNER JOIN</code></summary>
-```sql
 json_and_index=# EXPLAIN ANALYZE SELECT h.id, hd.tags FROM host h JOIN host_data hd ON h.id = hd.host_id AND hd.tags_token @@ to_tsquery('cat | rat');
                                                                 QUERY PLAN
 -------------------------------------------------------------------------------------------------------------------------------------------
@@ -677,7 +653,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT h.id, hd.tags FROM host h JOIN host_data
          ->  Seq Scan on host h  (cost=0.00..2.00 rows=100 width=4) (actual time=0.021..0.047 rows=100 loops=1)
  Planning Time: 1.297 ms
  Execution Time: 1.286 ms
-```
 </details>
 </pre>
 
@@ -687,7 +662,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT h.id, hd.tags FROM host h JOIN host_data
 <pre>
 <details>
 <summary>Результат запроса <code>INNER JOIN</code></summary>
-```shell
 json_and_index=# SELECT h.id, hd.tags FROM host h INNER JOIN host_data hd ON h.id = hd.host_id AND hd.tags_token @@ to_tsquery('cat | rat') LIMIT 20;
  id |                     tags
 ----+----------------------------------------------
@@ -711,7 +685,6 @@ json_and_index=# SELECT h.id, hd.tags FROM host h INNER JOIN host_data hd ON h.i
  24 | sunstroke unsketched pneumatize Cat
  25 | raptness cat diffusely
  27 | Juneberry rat quadriparous
-```
 </details>
 </pre>
 
@@ -723,7 +696,6 @@ json_and_index=# SELECT h.id, hd.tags FROM host h INNER JOIN host_data hd ON h.i
 <pre>
 <details>
 <summary><code>EXPLAIN ANALYZE</code> для <code>LEFT JOIN</code></summary>
-```shell
 json_and_index=# SELECT h.id, array_agg(hd.tags) FROM host h LEFT JOIN host_data hd ON h.id = hd.host_id AND hd.tags_token @@ to_tsquery('cat | rat') GROUP BY h.id LIMIT 20;
  id |                                      array_agg
 ----+--------------------------------------------------------------------------------------
@@ -747,7 +719,6 @@ json_and_index=# SELECT h.id, array_agg(hd.tags) FROM host h LEFT JOIN host_data
  18 | {"uniovular cat godmother Jovianly"}
  19 | {NULL}
  20 | {"Monothelitic hyposulphurous sisal rat"}
- ```
 </details>
 </pre>
 
@@ -755,7 +726,6 @@ json_and_index=# SELECT h.id, array_agg(hd.tags) FROM host h LEFT JOIN host_data
 <pre>
 <details>
 <summary><code>EXPLAIN ANALYZE</code> для <code>LEFT JOIN</code></summary>
-```shell
 json_and_index=# EXPLAIN ANALYZE SELECT h.id, array_agg(hd.tags) FROM host h LEFT JOIN host_data hd ON h.id = hd.host_id AND hd.tags_token @@ to_tsquery('cat | rat') GROUP BY h.id LIMIT 20;
                                                                          QUERY PLAN
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -775,7 +745,6 @@ json_and_index=# EXPLAIN ANALYZE SELECT h.id, array_agg(hd.tags) FROM host h LEF
                                  Index Cond: (tags_token @@ to_tsquery('cat | rat'::text))
  Planning Time: 5.253 ms
  Execution Time: 5.357 ms
-```
 </details>
 </pre>
 
@@ -820,16 +789,13 @@ json_and_index=# SELECT host_id, tags_token FROM host_data WHERE tags_token @@ t
 <pre>
 <details>
 <summary><code>FULL JOIN</code> сам запрос и результат</summary>
-```sql
 SELECT h.id, hc.tags_token FROM 
     (SELECT id FROM host WHERE id BETWEEN 70 AND 80) h 
         FULL JOIN 
     (SELECT host_id, tags_token FROM host_data WHERE tags_token @@ to_tsquery('codder')) hc 
         ON h.id = hc.host_id 
     ORDER BY h.id;
-```
 
-```shell
  id |                      tags_token
 ----+-------------------------------------------------------
  70 |
@@ -856,7 +822,6 @@ SELECT h.id, hc.tags_token FROM
     | 'codder':3 'paymast':2 'tasteless':1
     | 'codder':1 'illaud':2 'saka':3 'zooscop':4
 (23 rows)
-```
 </details>
 </pre>
 
@@ -867,15 +832,12 @@ SELECT h.id, hc.tags_token FROM
 <pre>
 <details>
 <summary><code>CROSS JOIN</code> запрос и результат</summary>
-```sql
 SELECT h.id, hc.tags_token FROM 
     (SELECT id FROM host WHERE id BETWEEN 70 AND 80) h 
   CROSS JOIN 
     (SELECT host_id, tags_token FROM host_data WHERE tags_token @@ to_tsquery('codder')) hc 
   ORDER BY h.id;
-```
 
-```shell
 SELECT h.id, hc.tags_token FROM (SELECT id FROM host WHERE id BETWEEN 70 AND 80) h CROSS JOIN (SELECT host_id, tags_token FROM host_data WHERE tags_token @@ to_tsquery('codder')) hc ORDER BY h.id;
 ...skipping 1 line
  80 | 'codder':3 'mycetogenet':1 'zobtenit':2
@@ -886,7 +848,6 @@ SELECT h.id, hc.tags_token FROM (SELECT id FROM host WHERE id BETWEEN 70 AND 80)
  80 | 'antithermin':2 'codder':1 'questionless':3
  80 | 'codder':1 'debamboozl':4 'forelock':2 'picknick':3
 (150 rows)
-```
 </details>
 </pre>
 
@@ -897,7 +858,6 @@ SELECT'ом, который будет содержать `host_id` и масс�
 <pre>
 <details>
 <summary><code>LEFT JOIN</code> и <code>RIGHT JOIN </code> запрос и результат</summary>
-```shell
   SELECT left.id, center.tags_token, right.host_id, right.agg_tempc FROM 
     (SELECT id FROM host WHERE id BETWEEN 70 AND 80) left
   LEFT JOIN 
@@ -917,7 +877,6 @@ SELECT'ом, который будет содержать `host_id` и масс�
  75 |                                                     |      75 | {39,58,71,78,80}
     |                                                     |      82 | {32,43,58,64,74,88}
     |                                                     |      64 | {30,46,66,76,84}
-```
 </details>
 </pre>
 
